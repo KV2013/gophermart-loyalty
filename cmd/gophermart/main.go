@@ -13,6 +13,7 @@ import (
 	"github.com/KV2013/gophermart-loyalty/internal/handler"
 	"github.com/KV2013/gophermart-loyalty/internal/logger"
 	"github.com/KV2013/gophermart-loyalty/internal/router"
+	"github.com/KV2013/gophermart-loyalty/internal/service/auth"
 	"go.uber.org/zap"
 )
 
@@ -26,8 +27,16 @@ func main() {
 		log.Fatal("Ошибка при сборке логгера")
 	}
 
-	handler := handler.New(config, Logger)
-	mux := router.Init(handler, Logger, config)
+	authHandler := handler.NewAuthHandler(config, Logger, auth.NewAuthService(config, Logger))
+	orderHandler := handler.NewOrderHandler(config, Logger)
+	balanceHandler := handler.NewBalanceHandler(config, Logger)
+	mux := router.Init(
+		authHandler,
+		orderHandler,
+		balanceHandler,
+		Logger,
+		config,
+	)
 	srv := &http.Server{
 		Addr:         config.ServerAddress,
 		Handler:      mux,

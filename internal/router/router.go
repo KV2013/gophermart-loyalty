@@ -8,20 +8,31 @@ import (
 	"go.uber.org/zap"
 )
 
-func Init(handler *handler.URLHandler, logger *zap.Logger, cfg *config.Config) *chi.Mux {
+func Init(
+	authHandler *handler.AuthHandler,
+	orderHandler *handler.OrderHandler,
+	balanceHandler *handler.BalanceHandler,
+	logger *zap.Logger,
+	cfg *config.Config,
+) *chi.Mux {
 
 	r := chi.NewRouter()
 	r.Use(middleware.ZapLogger(logger))
+	r.Use(middleware.Api)
 	r.Use(middleware.GzipCompression)
-	r.Use(middleware.AuthJWT(cfg, logger))
 
-	r.Post("/api/user/register", handler.APIUserRegister)
-	r.Post("/api/user/login", handler.APIUserLogin)
-	r.Post("/api/user/orders", handler.APIUserCreateOrder)
-	r.Get("/api/user/orders", handler.APIUserGetOrders)
-	r.Get("/api/user/balance", handler.APIUserGetBalance)
-	r.Post("/api/user/balance/withdraw", handler.APIUserCreateWithdrawal)
-	r.Get("/api/user/withdrawals", handler.APIUserGetWithdrawals)
+	r.Post("/api/user/register", authHandler.APIUserRegister)
+	r.Post("/api/user/login", authHandler.APIUserLogin)
 
+	r.Group(func(r chi.Router) {
+		r.Use(middleware.AuthJWT(cfg, logger))
+
+		r.Get("/api/user/orders", orderHandler.APIUserGetOrders)
+		r.Post("/api/user/orders", orderHandler.APIUserCreateOrder)
+
+		r.Get("/api/user/balance", balanceHandler.APIUserGetBalance)
+		r.Get("/api/user/withdrawals", balanceHandler.APIUserGetWithdrawals)
+		r.Post("/api/user/balance/withdraw", balanceHandler.APIUserCreateWithdrawal)
+	})
 	return r
 }
