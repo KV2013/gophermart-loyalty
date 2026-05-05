@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"context"
 	"errors"
 	"io"
 	"net/http"
@@ -19,9 +20,9 @@ type RegisterRequest struct {
 }
 
 type AuthService interface {
-	LoginExists(login string) bool
-	Register(login, password string) (*model.User, error)
-	Authenticate(login, password string) (*model.User, error)
+	LoginExists(ctx context.Context, login string) bool
+	Register(ctx context.Context, login, password string) (*model.User, error)
+	Authenticate(ctx context.Context, login, password string) (*model.User, error)
 }
 
 type AuthHandler struct {
@@ -93,7 +94,7 @@ func (h *AuthHandler) APIUserRegister(res http.ResponseWriter, req *http.Request
 		return
 	}
 
-	user, err := h.AuthService.Register(registerRequest.Login, registerRequest.Password)
+	user, err := h.AuthService.Register(r.Context, registerRequest.Login, registerRequest.Password)
 	if err != nil {
 		h.logger.Error("AuthHandler.APIUserRegister() ошибка регистрации пользователя", zap.Error(err))
 		err = writeJSONError(res, errInternalServerError, http.StatusInternalServerError)

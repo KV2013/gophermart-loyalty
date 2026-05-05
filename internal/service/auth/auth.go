@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"context"
 	"errors"
 
 	"github.com/KV2013/gophermart-loyalty/internal/config"
@@ -9,8 +10,8 @@ import (
 )
 
 type UserRepository interface {
-	FindByLogin(login string) (*model.User, error)
-	Create(user *model.User) error
+	FindByLogin(ctx context.Context, login string) (*model.User, error)
+	Create(ctx context.Context, user *model.User) error
 }
 
 type AuthService struct {
@@ -26,15 +27,15 @@ func NewAuthService(config *config.Config, logger *zap.Logger) *AuthService {
 	}
 }
 
-func (a *AuthService) LoginExists(login string) bool {
+func (a *AuthService) LoginExists(ctx context.Context, login string) bool {
 	return false
 }
 
-func (a *AuthService) Register(login, password string) (*model.User, error) {
+func (a *AuthService) Register(ctx context.Context, login, password string) (*model.User, error) {
 	return &model.User{}, errors.New("foo")
 }
 
-func (a *AuthService) Authenticate(login, password string) (*model.User, error) {
+func (a *AuthService) Authenticate(ctx context.Context, login, password string) (*model.User, error) {
 	return &model.User{}, errors.New("foo")
 }
 
