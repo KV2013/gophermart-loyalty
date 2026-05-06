@@ -20,7 +20,7 @@ type RegisterRequest struct {
 }
 
 type AuthService interface {
-	LoginExists(ctx context.Context, login string) bool
+	LoginExists(ctx context.Context, login string) (bool, error)
 	Register(ctx context.Context, login, password string) (*model.User, error)
 	Authenticate(ctx context.Context, login, password string) (*model.User, error)
 }
@@ -85,7 +85,17 @@ func (h *AuthHandler) APIUserRegister(res http.ResponseWriter, req *http.Request
 		return
 	}
 
-	if h.AuthService.LoginExists(registerRequest.Login) {
+	exists, err := h.AuthService.LoginExists(req.Context(), registerRequest.Login)
+	if err != nil {
+		h.logger.Error("AuthHandler.APIUserRegister() ошибка проверки существования login", zap.Error(err))
+		err = writeJSONError(res, errBadRequest, http.StatusBadRequest)
+		if err != nil {
+			h.logger.Error(writeJSONErrorMsg, zap.Error(err))
+		}
+		return
+	}
+
+	if exists {
 		h.logger.Error("AuthHandler.APIUserRegister() login уже занят")
 		err = writeJSONError(res, errLoginExists, http.StatusConflict)
 		if err != nil {
@@ -94,10 +104,20 @@ func (h *AuthHandler) APIUserRegister(res http.ResponseWriter, req *http.Request
 		return
 	}
 
-	user, err := h.AuthService.Register(r.Context, registerRequest.Login, registerRequest.Password)
+	user, err := h.AuthService.Register(req.Context(), registerRequest.Login, registerRequest.Password)
 	if err != nil {
 		h.logger.Error("AuthHandler.APIUserRegister() ошибка регистрации пользователя", zap.Error(err))
 		err = writeJSONError(res, errInternalServerError, http.StatusInternalServerError)
+		if err != nil {
+			h.logger.Error(writeJSONErrorMsg, zap.Error(err))
+		}
+		return
+	}
+
+	err = h.setAuthCookie(user, res)
+	if err != nil {
+		h.logger.Error(writeJSONErrorMsg, zap.Error(err))
+		err = writeJSONError(res, errInvalidCredentials, http.StatusUnauthorized)
 		if err != nil {
 			h.logger.Error(writeJSONErrorMsg, zap.Error(err))
 		}
@@ -140,7 +160,7 @@ func (h *AuthHandler) APIUserLogin(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	user, err := h.AuthService.Authenticate(loginRequest.Login, loginRequest.Password)
+	user, err := h.AuthService.Authenticate(req.Context(), loginRequest.Login, loginRequest.Password)
 	if err != nil {
 		h.logger.Error("AuthHandler.APIUserLogin() ошибка аутентификации", zap.Error(err))
 		err = writeJSONError(res, errInvalidCredentials, http.StatusUnauthorized)
@@ -150,14 +170,30 @@ func (h *AuthHandler) APIUserLogin(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	err = h.setAuthCookie(user, res)
+	if err != nil {
+		h.logger.Error(writeJSONErrorMsg, zap.Error(err))
+		err = writeJSONError(res, errInvalidCredentials, http.StatusUnauthorized)
+		if err != nil {
+			h.logger.Error(writeJSONErrorMsg, zap.Error(err))
+		}
+		return
+	}
+
+	h.logger.Info("Пользователь аутентифицирован", zap.String("login", user.Login))
+	res.WriteHeader(http.StatusOK)
+}
+
+func (h *AuthHandler) setAuthCookie(user *model.User, res http.ResponseWriter) error {
 	tokenString, err := auth.GenerateAccessToken(user.UUID.String(), h.config.JWTSecretKey)
 	if err != nil {
 		h.logger.Error("AuthHandler.APIUserLogin() ошибка генерации токена", zap.Error(err))
 		err = writeJSONError(res, errInternalServerError, http.StatusInternalServerError)
 		if err != nil {
-			h.logger.Error(writeJSONErrorMsg, zap.Error(err))
+			return err
 		}
-		return
+
+		return nil
 	}
 
 	http.SetCookie(res, &http.Cookie{
@@ -168,6 +204,5 @@ func (h *AuthHandler) APIUserLogin(res http.ResponseWriter, req *http.Request) {
 		Path:     "/",
 	})
 
-	h.logger.Info("Пользователь аутентифицирован", zap.String("login", user.Login))
-	res.WriteHeader(http.StatusOK)
+	return nil
 }

@@ -8,12 +8,12 @@ import (
 	"go.uber.org/zap"
 )
 
-type Repository interface {
-}
+type Repository1 interface{}
 
-func New(cfg *config.Config, logger *zap.Logger) (Repository, error) {
-	if cfg.DatabaseURI != "" {
-		return sqlxrepo.NewRepository(cfg.DatabaseURI, logger)
+func NewRepository(cfg *config.Config, logger *zap.Logger) (*sqlxrepo.SQLXRepository, error) {
+	if cfg.DatabaseURI == "" {
+		return nil, errors.New("no database URI provided")
 	}
-	return nil, errors.New("no database URI provided")
+
+	return sqlxrepo.NewRepository(cfg.DatabaseURI, logger)
 }
