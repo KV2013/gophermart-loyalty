@@ -7,8 +7,6 @@ import (
 	"go.uber.org/zap"
 )
 
-type OrderService interface{}
-
 type OrderHandler struct {
 	service OrderService
 	config  *config.Config

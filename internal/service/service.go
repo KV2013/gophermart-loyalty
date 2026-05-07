@@ -1,21 +1,35 @@
 package service
 
 import (
-	"github.com/KV2013/gophermart-loyalty/internal/repository"
-	"github.com/KV2013/gophermart-loyalty/internal/service/auth"
+	"context"
+
+	"github.com/KV2013/gophermart-loyalty/internal/model"
 	"go.uber.org/zap"
 )
 
-type Service struct {
-	Auth    *auth.AuthService
-	Order   *OrderService
-	Balance *BalanceService
+// UserRepository — интерфейс репозитория пользователей, определён на стороне потребителя.
+type UserRepository interface {
+	FindByLogin(ctx context.Context, login string) (*model.User, error)
+	FindByCredentials(ctx context.Context, login string, passwordHash string) (*model.User, error)
+	Create(ctx context.Context, login string, passwordHash string) (*model.User, error)
 }
 
-func New(repo *repository.Repository, logger *zap.Logger) *Service {
+// OrderRepository — интерфейс репозитория заказов, определён на стороне потребителя.
+type OrderRepository interface{}
+
+// BalanceRepository — интерфейс репозитория баланса, определён на стороне потребителя.
+type BalanceRepository interface{}
+
+type Service struct {
+	Auth    *authService
+	Order   *orderService
+	Balance *balanceService
+}
+
+func New(userRepo UserRepository, orderRepo OrderRepository, balanceRepo BalanceRepository, logger *zap.Logger) *Service {
 	return &Service{
-		Auth:    auth.NewAuthService(repo.User, logger),
-		Order:   NewOrderService(repo.Order, logger),
-		Balance: NewBalanceService(repo.Balance, logger),
+		Auth:    NewAuthService(userRepo, logger),
+		Order:   NewOrderService(orderRepo, logger),
+		Balance: NewBalanceService(balanceRepo, logger),
 	}
 }

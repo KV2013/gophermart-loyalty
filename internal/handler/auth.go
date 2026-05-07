@@ -1,15 +1,14 @@
 package handler
 
 import (
-	"context"
 	"errors"
 	"io"
 	"net/http"
 	"time"
 
 	"github.com/KV2013/gophermart-loyalty/internal/config"
+	jwtpkg "github.com/KV2013/gophermart-loyalty/internal/jwt"
 	"github.com/KV2013/gophermart-loyalty/internal/model"
-	"github.com/KV2013/gophermart-loyalty/internal/service/auth"
 	"github.com/mailru/easyjson"
 	"go.uber.org/zap"
 )
@@ -17,12 +16,6 @@ import (
 type RegisterRequest struct {
 	Login    string `json:"login"`
 	Password string `json:"password"`
-}
-
-type AuthService interface {
-	LoginExists(ctx context.Context, login string) (bool, error)
-	Register(ctx context.Context, login, password string) (*model.User, error)
-	Authenticate(ctx context.Context, login, password string) (*model.User, error)
 }
 
 type AuthHandler struct {
@@ -185,7 +178,7 @@ func (h *AuthHandler) APIUserLogin(res http.ResponseWriter, req *http.Request) {
 }
 
 func (h *AuthHandler) setAuthCookie(user *model.User, res http.ResponseWriter) error {
-	tokenString, err := auth.GenerateAccessToken(user.UUID.String(), h.config.JWTSecretKey)
+	tokenString, err := jwtpkg.GenerateAccessToken(user.UUID.String(), h.config.JWTSecretKey)
 	if err != nil {
 		h.logger.Error("AuthHandler.APIUserLogin() ошибка генерации токена", zap.Error(err))
 		err = writeJSONError(res, errInternalServerError, http.StatusInternalServerError)
@@ -199,7 +192,7 @@ func (h *AuthHandler) setAuthCookie(user *model.User, res http.ResponseWriter) e
 	http.SetCookie(res, &http.Cookie{
 		Name:     "token",
 		Value:    tokenString,
-		Expires:  time.Now().Add(auth.TokenExp),
+		Expires:  time.Now().Add(jwtpkg.TokenExp),
 		HttpOnly: true,
 		Path:     "/",
 	})

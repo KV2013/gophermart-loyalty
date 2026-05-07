@@ -1,4 +1,4 @@
-package auth
+package jwt
 
 import (
 	"errors"
@@ -14,8 +14,8 @@ type Claims struct {
 	UserID string
 }
 
-var errUnexpectedSigningMethodError = errors.New("непонятный метод подписи токена доступа")
-var errInvalidTokenError = errors.New("невалидный токен")
+var errUnexpectedSigningMethod = errors.New("непонятный метод подписи токена доступа")
+var errInvalidToken = errors.New("невалидный токен")
 
 func GenerateAccessToken(userID string, secretKey string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, Claims{
@@ -31,12 +31,12 @@ func GetUserID(tokenString string, secretKey string) (string, error) {
 	claims := &Claims{}
 	token, err := jwt.ParseWithClaims(tokenString, claims, func(t *jwt.Token) (interface{}, error) {
 		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, errUnexpectedSigningMethodError
+			return nil, errUnexpectedSigningMethod
 		}
 		return []byte(secretKey), nil
 	})
 	if err != nil || !token.Valid {
-		return "", errInvalidTokenError
+		return "", errInvalidToken
 	}
 	return claims.UserID, nil
 }

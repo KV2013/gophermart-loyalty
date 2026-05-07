@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/KV2013/gophermart-loyalty/internal/config"
-	"github.com/KV2013/gophermart-loyalty/internal/service/auth"
+	jwtpkg "github.com/KV2013/gophermart-loyalty/internal/jwt"
 	"go.uber.org/zap"
 )
 
@@ -35,7 +35,7 @@ func AuthJWT(cfg *config.Config, logger *zap.Logger) func(next http.Handler) htt
 				return
 			}
 
-			id, parseErr := auth.GetUserID(cookie.Value, cfg.JWTSecretKey)
+			id, parseErr := jwtpkg.GetUserID(cookie.Value, cfg.JWTSecretKey)
 			if parseErr != nil {
 				respErr = writeError(w, AuthError{
 					Status:  http.StatusUnauthorized,

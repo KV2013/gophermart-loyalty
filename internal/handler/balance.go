@@ -13,8 +13,6 @@ type BalanceHandler struct {
 	logger  *zap.Logger
 }
 
-type BalanceService interface{}
-
 func NewBalanceHandler(service BalanceService, config *config.Config, logger *zap.Logger) *BalanceHandler {
 	return &BalanceHandler{
 		service: service,

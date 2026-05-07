@@ -32,8 +32,8 @@ func main() {
 	if repoErr != nil {
 		Logger.Fatal("Ошибка при сборке репозитория", zap.Error(repoErr))
 	}
-	service := service.New(repository, Logger)
-	handler := handler.New(service, config, Logger)
+	service := service.New(repository.User, repository.Order, repository.Balance, Logger)
+	handler := handler.New(service.Auth, service.Balance, service.Order, config, Logger)
 
 	mux := router.Init(handler, Logger, config)
 	srv := &http.Server{
