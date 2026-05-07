@@ -7,15 +7,19 @@ import (
 	"go.uber.org/zap"
 )
 
+type OrderService interface{}
+
 type OrderHandler struct {
-	config *config.Config
-	logger *zap.Logger
+	service OrderService
+	config  *config.Config
+	logger  *zap.Logger
 }
 
-func NewOrderHandler(config *config.Config, logger *zap.Logger) *OrderHandler {
+func NewOrderHandler(service OrderService, config *config.Config, logger *zap.Logger) *OrderHandler {
 	return &OrderHandler{
-		config: config,
-		logger: logger,
+		service: service,
+		config:  config,
+		logger:  logger,
 	}
 }
 

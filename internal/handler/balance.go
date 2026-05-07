@@ -8,14 +8,18 @@ import (
 )
 
 type BalanceHandler struct {
-	config *config.Config
-	logger *zap.Logger
+	service BalanceService
+	config  *config.Config
+	logger  *zap.Logger
 }
 
-func NewBalanceHandler(config *config.Config, logger *zap.Logger) *BalanceHandler {
+type BalanceService interface{}
+
+func NewBalanceHandler(service BalanceService, config *config.Config, logger *zap.Logger) *BalanceHandler {
 	return &BalanceHandler{
-		config: config,
-		logger: logger,
+		service: service,
+		config:  config,
+		logger:  logger,
 	}
 }
 

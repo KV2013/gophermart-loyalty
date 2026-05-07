@@ -9,9 +9,7 @@ import (
 )
 
 func Init(
-	authHandler *handler.AuthHandler,
-	orderHandler *handler.OrderHandler,
-	balanceHandler *handler.BalanceHandler,
+	h *handler.Handler,
 	logger *zap.Logger,
 	cfg *config.Config,
 ) *chi.Mux {
@@ -21,18 +19,18 @@ func Init(
 	r.Use(middleware.Api)
 	r.Use(middleware.GzipCompression)
 
-	r.Post("/api/user/register", authHandler.APIUserRegister)
-	r.Post("/api/user/login", authHandler.APIUserLogin)
+	r.Post("/api/user/register", h.Auth.APIUserRegister)
+	r.Post("/api/user/login", h.Auth.APIUserLogin)
 
 	r.Group(func(r chi.Router) {
 		r.Use(middleware.AuthJWT(cfg, logger))
 
-		r.Get("/api/user/orders", orderHandler.APIUserGetOrders)
-		r.Post("/api/user/orders", orderHandler.APIUserCreateOrder)
+		r.Get("/api/user/orders", h.Order.APIUserGetOrders)
+		r.Post("/api/user/orders", h.Order.APIUserCreateOrder)
 
-		r.Get("/api/user/balance", balanceHandler.APIUserGetBalance)
-		r.Get("/api/user/withdrawals", balanceHandler.APIUserGetWithdrawals)
-		r.Post("/api/user/balance/withdraw", balanceHandler.APIUserCreateWithdrawal)
+		r.Get("/api/user/balance", h.Balance.APIUserGetBalance)
+		r.Get("/api/user/withdrawals", h.Balance.APIUserGetWithdrawals)
+		r.Post("/api/user/balance/withdraw", h.Balance.APIUserCreateWithdrawal)
 	})
 	return r
 }

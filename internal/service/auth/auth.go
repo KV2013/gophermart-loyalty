@@ -5,7 +5,6 @@ import (
 	"crypto/sha256"
 	"fmt"
 
-	"github.com/KV2013/gophermart-loyalty/internal/config"
 	"github.com/KV2013/gophermart-loyalty/internal/model"
 	"go.uber.org/zap"
 )
@@ -17,14 +16,12 @@ type UserRepository interface {
 }
 
 type AuthService struct {
-	config         *config.Config
 	logger         *zap.Logger
 	userRepository UserRepository
 }
 
-func NewAuthService(config *config.Config, logger *zap.Logger, userRepository UserRepository) *AuthService {
+func NewAuthService(userRepository UserRepository, logger *zap.Logger) *AuthService {
 	return &AuthService{
-		config:         config,
 		logger:         logger,
 		userRepository: userRepository,
 	}

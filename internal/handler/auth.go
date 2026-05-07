@@ -31,7 +31,7 @@ type AuthHandler struct {
 	AuthService AuthService
 }
 
-func NewAuthHandler(config *config.Config, logger *zap.Logger, AuthService AuthService) *AuthHandler {
+func NewAuthHandler(AuthService AuthService, config *config.Config, logger *zap.Logger) *AuthHandler {
 	return &AuthHandler{
 		config:      config,
 		logger:      logger,
