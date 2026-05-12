@@ -24,7 +24,8 @@ func NewOrderRepository(db *sqlx.DB, logger *zap.Logger) (*OrderRepository, erro
 func (r *OrderRepository) FindByNumber(ctx context.Context, number string) (*model.Order, error) {
 	var order model.Order
 	query := `
-		SELECT o.id, o.user_id, u.uuid::text AS user_uuid, o.number, o.status, o.accrual, o.uploaded_at
+		SELECT o.id, o.user_id, u.uuid::text AS user_uuid, o.number, o.status, o.uploaded_at,
+		       COALESCE((SELECT SUM(val) FROM order_points_operations WHERE order_id = o.id), 0) AS accrual
 		FROM orders o
 		JOIN users u ON o.user_id = u.id
 		WHERE o.number = $1`
@@ -50,10 +51,11 @@ func (r *OrderRepository) Create(ctx context.Context, userID int64, number strin
 func (r *OrderRepository) GetAllByUserID(ctx context.Context, userID int64, limit, offset int) ([]model.Order, error) {
 	var orders []model.Order
 	query := `
-		SELECT id, user_id, number, status, accrual, uploaded_at
-		FROM orders
-		WHERE user_id = $1
-		ORDER BY uploaded_at DESC
+		SELECT o.id, o.user_id, o.number, o.status, o.uploaded_at,
+		       COALESCE((SELECT SUM(val) FROM order_points_operations WHERE order_id = o.id), 0) AS accrual
+		FROM orders o
+		WHERE o.user_id = $1
+		ORDER BY o.uploaded_at DESC
 		LIMIT $2 OFFSET $3`
 	if err := r.db.SelectContext(ctx, &orders, query, userID, limit, offset); err != nil {
 		return nil, fmt.Errorf("OrderRepository.GetAllByUserID: %w", err)
