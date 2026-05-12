@@ -16,7 +16,11 @@ type AuthService interface {
 
 type BalanceService interface{}
 
-type OrderService interface{}
+type OrderService interface {
+	FindUserByUUID(ctx context.Context, uuid string) (*model.User, error)
+	CreateOrder(ctx context.Context, userID int64, number string) error
+	GetUserOrders(ctx context.Context, userID int64, limit, offset int) ([]model.Order, error)
+}
 
 type Handler struct {
 	Auth    *AuthHandler

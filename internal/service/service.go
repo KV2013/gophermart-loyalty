@@ -11,11 +11,17 @@ import (
 type UserRepository interface {
 	FindByLogin(ctx context.Context, login string) (*model.User, error)
 	FindByCredentials(ctx context.Context, login string, passwordHash string) (*model.User, error)
+	FindByUUID(ctx context.Context, uuid string) (*model.User, error)
+	UUIDExists(ctx context.Context, uuid string) (bool, error)
 	Create(ctx context.Context, login string, passwordHash string) (*model.User, error)
 }
 
 // OrderRepository — интерфейс репозитория заказов, определён на стороне потребителя.
-type OrderRepository interface{}
+type OrderRepository interface {
+	FindByNumber(ctx context.Context, number string) (*model.Order, error)
+	Create(ctx context.Context, userID int64, number string) error
+	GetAllByUserID(ctx context.Context, userID int64, limit, offset int) ([]model.Order, error)
+}
 
 // BalanceRepository — интерфейс репозитория баланса, определён на стороне потребителя.
 type BalanceRepository interface{}
@@ -29,7 +35,7 @@ type Service struct {
 func New(userRepo UserRepository, orderRepo OrderRepository, balanceRepo BalanceRepository, logger *zap.Logger) *Service {
 	return &Service{
 		Auth:    NewAuthService(userRepo, logger),
-		Order:   NewOrderService(orderRepo, logger),
+		Order:   NewOrderService(orderRepo, userRepo, logger),
 		Balance: NewBalanceService(balanceRepo, logger),
 	}
 }

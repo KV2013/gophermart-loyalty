@@ -133,3 +133,47 @@ func NewMockOrderService(ctrl *gomock.Controller) *MockOrderService {
 func (m *MockOrderService) EXPECT() *MockOrderServiceMockRecorder {
 	return m.recorder
 }
+
+// CreateOrder mocks base method.
+func (m *MockOrderService) CreateOrder(ctx context.Context, userID int64, number string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateOrder", ctx, userID, number)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CreateOrder indicates an expected call of CreateOrder.
+func (mr *MockOrderServiceMockRecorder) CreateOrder(ctx, userID, number any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateOrder", reflect.TypeOf((*MockOrderService)(nil).CreateOrder), ctx, userID, number)
+}
+
+// FindUserByUUID mocks base method.
+func (m *MockOrderService) FindUserByUUID(ctx context.Context, uuid string) (*model.User, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FindUserByUUID", ctx, uuid)
+	ret0, _ := ret[0].(*model.User)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// FindUserByUUID indicates an expected call of FindUserByUUID.
+func (mr *MockOrderServiceMockRecorder) FindUserByUUID(ctx, uuid any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindUserByUUID", reflect.TypeOf((*MockOrderService)(nil).FindUserByUUID), ctx, uuid)
+}
+
+// GetUserOrders mocks base method.
+func (m *MockOrderService) GetUserOrders(ctx context.Context, userID int64, limit, offset int) ([]model.Order, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetUserOrders", ctx, userID, limit, offset)
+	ret0, _ := ret[0].([]model.Order)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetUserOrders indicates an expected call of GetUserOrders.
+func (mr *MockOrderServiceMockRecorder) GetUserOrders(ctx, userID, limit, offset any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserOrders", reflect.TypeOf((*MockOrderService)(nil).GetUserOrders), ctx, userID, limit, offset)
+}

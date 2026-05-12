@@ -10,6 +10,7 @@ import (
 
 func Init(
 	h *handler.Handler,
+	authService middleware.AuthService,
 	logger *zap.Logger,
 	cfg *config.Config,
 ) *chi.Mux {
