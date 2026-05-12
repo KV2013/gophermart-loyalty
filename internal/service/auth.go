@@ -39,6 +39,14 @@ func (a *authService) Authenticate(ctx context.Context, login, password string) 
 	return a.userRepository.FindByCredentials(ctx, login, passwordHash)
 }
 
+func (a *authService) UserExistsByUUID(ctx context.Context, uuid string) (bool, error) {
+	if uuid == "" {
+		return false, errors.New("не задан uuid")
+	}
+
+	return a.userRepository.UUIDExists(ctx, uuid)
+}
+
 func hashPassword(password string) string {
 	hash := sha256.Sum256([]byte(password))
 	return fmt.Sprintf("%x", hash)

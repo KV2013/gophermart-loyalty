@@ -17,7 +17,11 @@ type AuthError struct {
 	Message string `json:"error"`
 }
 
-func AuthJWT(cfg *config.Config, logger *zap.Logger) func(next http.Handler) http.Handler {
+type AuthService interface {
+	UserExistsByUUID(ctx context.Context, uuid string) (bool, error)
+}
+
+func AuthJWT(AuthService AuthService, cfg *config.Config, logger *zap.Logger) func(next http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			var userID string
@@ -59,6 +63,27 @@ func AuthJWT(cfg *config.Config, logger *zap.Logger) func(next http.Handler) htt
 			}
 
 			userID = id
+			exists, err := AuthService.UserExistsByUUID(r.Context(), userID)
+			if err != nil {
+				respErr = writeError(w, AuthError{
+					Status:  http.StatusInternalServerError,
+					Message: err.Error(),
+				})
+				if respErr != nil {
+					logger.Error("writeError", zap.Error(respErr))
+				}
+				return
+			}
+			if !exists {
+				respErr = writeError(w, AuthError{
+					Status:  http.StatusUnauthorized,
+					Message: "Пользователь не найден",
+				})
+				if respErr != nil {
+					logger.Error("writeError", zap.Error(respErr))
+				}
+				return
+			}
 			logger.Debug("middleware.AuthJWT", zap.String("userID", userID))
 			ctx := context.WithValue(r.Context(), UserIDContextKey, userID)
 

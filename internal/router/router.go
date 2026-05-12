@@ -23,7 +23,7 @@ func Init(
 	r.Post("/api/user/login", h.Auth.APIUserLogin)
 
 	r.Group(func(r chi.Router) {
-		r.Use(middleware.AuthJWT(cfg, logger))
+		r.Use(middleware.AuthJWT(authService, cfg, logger))
 
 		r.Get("/api/user/orders", h.Order.APIUserGetOrders)
 		r.Post("/api/user/orders", h.Order.APIUserCreateOrder)

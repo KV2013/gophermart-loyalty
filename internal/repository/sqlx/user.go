@@ -70,9 +70,33 @@ func (r *UserRepository) FindByCredentials(ctx context.Context, login string, pa
 		return nil, fmt.Errorf("FindByCredentials: %w", err)
 	}
 
-	if !user.DeletedAt.IsZero() {
-		return nil, &model.ErrUserDeleted{Login: login, DeletedAt: user.DeletedAt}
+	if user.DeletedAt != nil {
+		return nil, &model.ErrUserDeleted{Login: login, DeletedAt: *user.DeletedAt}
 	}
 
 	return &user, nil
+}
+
+func (r *UserRepository) FindByUUID(ctx context.Context, uuid string) (*model.User, error) {
+	var user model.User
+	err := r.db.GetContext(ctx, &user, `SELECT `+userFieldsSql+` FROM users WHERE uuid = $1`, uuid)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, &model.ErrUserNotFound{Login: uuid}
+		}
+		return nil, fmt.Errorf("FindByUUID: %w", err)
+	}
+	if user.DeletedAt != nil {
+		return nil, &model.ErrUserDeleted{Login: user.Login, DeletedAt: *user.DeletedAt}
+	}
+	return &user, nil
+}
+
+func (r *UserRepository) UUIDExists(ctx context.Context, uuid string) (bool, error) {
+	var exists bool
+	err := r.db.GetContext(ctx, &exists, `SELECT EXISTS(SELECT 1 FROM users WHERE uuid = $1 AND deleted_at IS NULL)`, uuid)
+	if err != nil {
+		return false, fmt.Errorf("UUIDExists: %w", err)
+	}
+	return exists, nil
 }

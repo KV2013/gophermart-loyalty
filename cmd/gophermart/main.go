@@ -35,7 +35,7 @@ func main() {
 	service := service.New(repository.User, repository.Order, repository.Balance, Logger)
 	handler := handler.New(service.Auth, service.Balance, service.Order, config, Logger)
 
-	mux := router.Init(handler, Logger, config)
+	mux := router.Init(handler, service.Auth, Logger, config)
 	srv := &http.Server{
 		Addr:         config.ServerAddress,
 		Handler:      mux,
