@@ -5,5 +5,5 @@ CREATE TABLE IF NOT EXISTS users (
     uuid       UUID NOT NULL DEFAULT gen_random_uuid() UNIQUE,
     created_at TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
-    deleted_at TIMESTAMPTZ
+    deleted_at TIMESTAMPTZ  NULL
 );
