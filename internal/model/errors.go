@@ -47,3 +47,9 @@ type ErrOrderOwnedByOther struct {
 func (e *ErrOrderOwnedByOther) Error() string {
 	return "заказ уже загружен другим пользователем: " + e.Number
 }
+
+type ErrInsufficientBalance struct{}
+
+func (e *ErrInsufficientBalance) Error() string {
+	return "на счету недостаточно средств"
+}
