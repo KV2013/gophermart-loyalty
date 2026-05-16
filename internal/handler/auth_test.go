@@ -6,30 +6,12 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
-	"time"
 
-	"github.com/KV2013/gophermart-loyalty/internal/config"
 	"github.com/KV2013/gophermart-loyalty/internal/handler"
 	"github.com/KV2013/gophermart-loyalty/internal/handler/mock"
-	"github.com/KV2013/gophermart-loyalty/internal/model"
-	"github.com/google/uuid"
 	"go.uber.org/mock/gomock"
 	"go.uber.org/zap"
 )
-
-func testConfig() *config.Config {
-	return &config.Config{JWTSecretKey: "test-secret-key"}
-}
-
-func testUser() *model.User {
-	return &model.User{
-		ID:        1,
-		UUID:      uuid.New(),
-		Login:     "alice",
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
-	}
-}
 
 func TestAPIUserRegister(t *testing.T) {
 	tests := []struct {

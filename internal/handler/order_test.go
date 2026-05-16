@@ -1,8 +1,6 @@
 package handler_test
 
 import (
-	"bytes"
-	"context"
 	"encoding/json"
 	"errors"
 	"net/http"
@@ -12,23 +10,10 @@ import (
 
 	"github.com/KV2013/gophermart-loyalty/internal/handler"
 	"github.com/KV2013/gophermart-loyalty/internal/handler/mock"
-	"github.com/KV2013/gophermart-loyalty/internal/middleware"
 	"github.com/KV2013/gophermart-loyalty/internal/model"
 	"go.uber.org/mock/gomock"
 	"go.uber.org/zap"
 )
-
-const (
-	validOrderNumber   = "79927398713" // проходит алгоритм Луна
-	invalidOrderNumber = "12345678901" // не проходит алгоритм Луна
-	testUserUUID       = "550e8400-e29b-41d4-a716-446655440000"
-)
-
-func requestWithUserUUID(method, path, body, uuid string) *http.Request {
-	req := httptest.NewRequest(method, path, bytes.NewBufferString(body))
-	ctx := context.WithValue(req.Context(), middleware.UserIDContextKey, uuid)
-	return req.WithContext(ctx)
-}
 
 func TestAPIUserCreateOrder(t *testing.T) {
 	tests := []struct {
@@ -158,12 +143,12 @@ func testOrders() []model.Order {
 
 func TestAPIUserGetOrders(t *testing.T) {
 	tests := []struct {
-		name        string
-		query       string
-		uuid        string
-		setup       func(svc *mock.MockOrderService)
-		wantStatus  int
-		wantOrders  bool
+		name       string
+		query      string
+		uuid       string
+		setup      func(svc *mock.MockOrderService)
+		wantStatus int
+		wantOrders bool
 	}{
 		{
 			name:  "200 список заказов (параметры по умолчанию)",

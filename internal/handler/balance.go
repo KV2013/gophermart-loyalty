@@ -121,7 +121,7 @@ func (h *BalanceHandler) APIUserGetWithdrawals(res http.ResponseWriter, req *htt
 		}
 		responses[i] = WithdrawalResponse{
 			Order:       order,
-			Sum:         -t.Sum,
+			Sum:         t.Sum,
 			ProcessedAt: t.CreatedAt.Format("2006-01-02T15:04:05-07:00"),
 		}
 	}

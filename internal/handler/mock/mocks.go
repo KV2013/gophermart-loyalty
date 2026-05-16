@@ -110,6 +110,65 @@ func (m *MockBalanceService) EXPECT() *MockBalanceServiceMockRecorder {
 	return m.recorder
 }
 
+// CreateWithdrawal mocks base method.
+func (m *MockBalanceService) CreateWithdrawal(ctx context.Context, userID int64, orderNumber string, sum float64) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateWithdrawal", ctx, userID, orderNumber, sum)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CreateWithdrawal indicates an expected call of CreateWithdrawal.
+func (mr *MockBalanceServiceMockRecorder) CreateWithdrawal(ctx, userID, orderNumber, sum any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateWithdrawal", reflect.TypeOf((*MockBalanceService)(nil).CreateWithdrawal), ctx, userID, orderNumber, sum)
+}
+
+// FindUserByUUID mocks base method.
+func (m *MockBalanceService) FindUserByUUID(ctx context.Context, uuid string) (*model.User, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FindUserByUUID", ctx, uuid)
+	ret0, _ := ret[0].(*model.User)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// FindUserByUUID indicates an expected call of FindUserByUUID.
+func (mr *MockBalanceServiceMockRecorder) FindUserByUUID(ctx, uuid any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindUserByUUID", reflect.TypeOf((*MockBalanceService)(nil).FindUserByUUID), ctx, uuid)
+}
+
+// GetBalance mocks base method.
+func (m *MockBalanceService) GetBalance(ctx context.Context, userID int64) (*model.Balance, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetBalance", ctx, userID)
+	ret0, _ := ret[0].(*model.Balance)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetBalance indicates an expected call of GetBalance.
+func (mr *MockBalanceServiceMockRecorder) GetBalance(ctx, userID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBalance", reflect.TypeOf((*MockBalanceService)(nil).GetBalance), ctx, userID)
+}
+
+// GetUserWithdrawals mocks base method.
+func (m *MockBalanceService) GetUserWithdrawals(ctx context.Context, userID int64) ([]model.Transaction, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetUserWithdrawals", ctx, userID)
+	ret0, _ := ret[0].([]model.Transaction)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetUserWithdrawals indicates an expected call of GetUserWithdrawals.
+func (mr *MockBalanceServiceMockRecorder) GetUserWithdrawals(ctx, userID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserWithdrawals", reflect.TypeOf((*MockBalanceService)(nil).GetUserWithdrawals), ctx, userID)
+}
+
 // MockOrderService is a mock of OrderService interface.
 type MockOrderService struct {
 	ctrl     *gomock.Controller
