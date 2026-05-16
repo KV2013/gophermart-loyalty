@@ -14,7 +14,12 @@ type AuthService interface {
 	Authenticate(ctx context.Context, login, password string) (*model.User, error)
 }
 
-type BalanceService interface{}
+type BalanceService interface {
+	FindUserByUUID(ctx context.Context, uuid string) (*model.User, error)
+	GetBalance(ctx context.Context, userID int64) (*model.Balance, error)
+	GetUserWithdrawals(ctx context.Context, userID int64) ([]model.Transaction, error)
+	CreateWithdrawal(ctx context.Context, userID int64, orderNumber string, sum float64) error
+}
 
 type OrderService interface {
 	FindUserByUUID(ctx context.Context, uuid string) (*model.User, error)

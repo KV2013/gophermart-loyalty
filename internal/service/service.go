@@ -24,7 +24,11 @@ type OrderRepository interface {
 }
 
 // BalanceRepository — интерфейс репозитория баланса, определён на стороне потребителя.
-type BalanceRepository interface{}
+type BalanceRepository interface {
+	GetBalance(ctx context.Context, userID int64) (*model.Balance, error)
+	GetUserWithdrawals(ctx context.Context, userID int64) ([]model.Transaction, error)
+	CreateWithdrawal(ctx context.Context, userID int64, orderNumber string, sum float64) error
+}
 
 type Service struct {
 	Auth    *authService
@@ -36,6 +40,6 @@ func New(userRepo UserRepository, orderRepo OrderRepository, balanceRepo Balance
 	return &Service{
 		Auth:    NewAuthService(userRepo, logger),
 		Order:   NewOrderService(orderRepo, userRepo, logger),
-		Balance: NewBalanceService(balanceRepo, logger),
+		Balance: NewBalanceService(balanceRepo, userRepo, orderRepo, logger),
 	}
 }
