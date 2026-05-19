@@ -25,7 +25,15 @@ func (r *OrderRepository) FindByNumber(ctx context.Context, number string) (*mod
 	var order model.Order
 	query := `
 		SELECT o.id, o.user_id, u.uuid::text AS user_uuid, o.number, o.status, o.uploaded_at,
-		       COALESCE((SELECT SUM(val) FROM order_points_operations WHERE order_id = o.id), 0) AS accrual
+		       COALESCE(
+			   		(
+			   			SELECT SUM(tr.sum)
+						FROM transactions AS tr
+						WHERE order_id = o.id
+						AND tr.sum >= 0
+					),
+					0
+				) AS accrual
 		FROM orders o
 		JOIN users u ON o.user_id = u.id
 		WHERE o.number = $1`
@@ -51,8 +59,21 @@ func (r *OrderRepository) Create(ctx context.Context, userID int64, number strin
 func (r *OrderRepository) GetAllByUserID(ctx context.Context, userID int64, limit, offset int) ([]model.Order, error) {
 	var orders []model.Order
 	query := `
-		SELECT o.id, o.user_id, o.number, o.status, o.uploaded_at,
-		       COALESCE((SELECT SUM(val) FROM order_points_operations WHERE order_id = o.id), 0) AS accrual
+		SELECT
+				o.id,
+				o.user_id,
+				o.number,
+				o.status,
+				o.uploaded_at,
+		       	COALESCE(
+			   		(
+			   			SELECT SUM(tr.sum)
+						FROM transactions AS tr
+						WHERE order_id = o.id
+						AND tr.sum >= 0
+					),
+					0
+				) AS accrual
 		FROM orders o
 		WHERE o.user_id = $1
 		ORDER BY o.uploaded_at DESC
