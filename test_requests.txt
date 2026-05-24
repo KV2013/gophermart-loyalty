@@ -30,11 +30,13 @@ curl -v -X POST "$BASE/api/user/orders" \
 
 // GET balance
 curl -v -X GET "$BASE/api/user/balance" \
+  -H "Content-Type: application/json" \
   -b gophermart-cookie.txt \
   -w "\nHTTP status: %{http_code}\n"
 
 // GET withdrawals
 curl -v -X GET "$BASE/api/user/withdrawals" \
+  -H "Content-Type: application/json" \
   -b gophermart-cookie.txt \
   -w "\nHTTP status: %{http_code}\n"
 
