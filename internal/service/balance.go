@@ -222,7 +222,7 @@ func (s *balanceService) updatePoints(ctx context.Context, result *orderResult) 
 			if err := s.repo.CreateAccrualTransaction(ctx, result.OrderID, result.UserID, result.Accrual); err != nil {
 				s.logger.Error("BalanceService: ошибка создания транзакции начисления",
 					zap.Int64("orderID", result.OrderID),
-					zap.Float64("accrual", result.Accrual),
+					zap.Float32("accrual", result.Accrual),
 					zap.Error(err),
 				)
 			}
