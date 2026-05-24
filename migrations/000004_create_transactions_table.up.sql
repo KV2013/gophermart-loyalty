@@ -3,6 +3,6 @@ CREATE TABLE IF NOT EXISTS transactions (
     order_id     BIGINT       NULL REFERENCES orders(id),
     order_number VARCHAR(255) NULL,
     user_id      BIGINT       NOT NULL REFERENCES users(id),
-    sum          DOUBLE PRECISION NOT NULL DEFAULT 0,
+    sum          REAL PRECISION NOT NULL DEFAULT 0,
     created_at   TIMESTAMPTZ  NOT NULL DEFAULT NOW()
 );
