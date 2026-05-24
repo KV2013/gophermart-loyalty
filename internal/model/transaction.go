@@ -7,6 +7,6 @@ type Transaction struct {
 	OrderID     *int64    `db:"order_id"`
 	OrderNumber *string   `db:"order_number"`
 	UserID      int64     `db:"user_id"`
-	Sum         float64   `db:"sum"`
+	Sum         float32   `db:"sum"`
 	CreatedAt   time.Time `db:"created_at"`
 }

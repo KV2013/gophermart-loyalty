@@ -8,12 +8,40 @@ import (
   "github.com/mailru/easyjson/jlexer"
 )
 
+func ( AuthHandler ) MarshalJSON() ([]byte, error) { return nil, nil }
+func (* AuthHandler ) UnmarshalJSON([]byte) error { return nil }
+func ( AuthHandler ) MarshalEasyJSON(w *jwriter.Writer) {}
+func (* AuthHandler ) UnmarshalEasyJSON(l *jlexer.Lexer) {}
+
+type EasyJSON_exporter_AuthHandler *AuthHandler
+
 func ( BalanceHandler ) MarshalJSON() ([]byte, error) { return nil, nil }
 func (* BalanceHandler ) UnmarshalJSON([]byte) error { return nil }
 func ( BalanceHandler ) MarshalEasyJSON(w *jwriter.Writer) {}
 func (* BalanceHandler ) UnmarshalEasyJSON(l *jlexer.Lexer) {}
 
 type EasyJSON_exporter_BalanceHandler *BalanceHandler
+
+func ( Handler ) MarshalJSON() ([]byte, error) { return nil, nil }
+func (* Handler ) UnmarshalJSON([]byte) error { return nil }
+func ( Handler ) MarshalEasyJSON(w *jwriter.Writer) {}
+func (* Handler ) UnmarshalEasyJSON(l *jlexer.Lexer) {}
+
+type EasyJSON_exporter_Handler *Handler
+
+func ( OrderHandler ) MarshalJSON() ([]byte, error) { return nil, nil }
+func (* OrderHandler ) UnmarshalJSON([]byte) error { return nil }
+func ( OrderHandler ) MarshalEasyJSON(w *jwriter.Writer) {}
+func (* OrderHandler ) UnmarshalEasyJSON(l *jlexer.Lexer) {}
+
+type EasyJSON_exporter_OrderHandler *OrderHandler
+
+func ( RegisterRequest ) MarshalJSON() ([]byte, error) { return nil, nil }
+func (* RegisterRequest ) UnmarshalJSON([]byte) error { return nil }
+func ( RegisterRequest ) MarshalEasyJSON(w *jwriter.Writer) {}
+func (* RegisterRequest ) UnmarshalEasyJSON(l *jlexer.Lexer) {}
+
+type EasyJSON_exporter_RegisterRequest *RegisterRequest
 
 func ( WithdrawalListResponse ) MarshalJSON() ([]byte, error) { return nil, nil }
 func (* WithdrawalListResponse ) UnmarshalJSON([]byte) error { return nil }

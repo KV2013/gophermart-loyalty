@@ -30,8 +30,8 @@ type OrderRepository interface {
 type BalanceRepository interface {
 	GetBalance(ctx context.Context, userID int64) (*model.Balance, error)
 	GetUserWithdrawals(ctx context.Context, userID int64) ([]model.Transaction, error)
-	CreateWithdrawal(ctx context.Context, userID int64, orderNumber string, sum float64) error
-	CreateAccrualTransaction(ctx context.Context, orderID int64, userID int64, sum float64) error
+	CreateWithdrawal(ctx context.Context, userID int64, orderNumber string, sum float32) error
+	CreateAccrualTransaction(ctx context.Context, orderID int64, userID int64, sum float32) error
 }
 
 type Service struct {

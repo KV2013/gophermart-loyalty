@@ -46,7 +46,7 @@ func (r *BalanceRepository) GetUserWithdrawals(ctx context.Context, userID int64
 	return transactions, nil
 }
 
-func (r *BalanceRepository) CreateWithdrawal(ctx context.Context, userID int64, orderNumber string, sum float64) error {
+func (r *BalanceRepository) CreateWithdrawal(ctx context.Context, userID int64, orderNumber string, sum float32) error {
 	query := `INSERT INTO transactions (order_number, user_id, sum) VALUES ($1, $2, $3)`
 	if _, err := r.db.ExecContext(ctx, query, orderNumber, userID, -sum); err != nil {
 		return fmt.Errorf("BalanceRepository.CreateWithdrawal: %w", err)
@@ -54,7 +54,7 @@ func (r *BalanceRepository) CreateWithdrawal(ctx context.Context, userID int64, 
 	return nil
 }
 
-func (r *BalanceRepository) CreateAccrualTransaction(ctx context.Context, orderID int64, userID int64, sum float64) error {
+func (r *BalanceRepository) CreateAccrualTransaction(ctx context.Context, orderID int64, userID int64, sum float32) error {
 	query := `INSERT INTO transactions (order_id, user_id, sum) VALUES ($1, $2, $3)`
 	if _, err := r.db.ExecContext(ctx, query, orderID, userID, sum); err != nil {
 		return fmt.Errorf("BalanceRepository.CreateAccrualTransaction: %w", err)

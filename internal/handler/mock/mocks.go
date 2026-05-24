@@ -111,7 +111,7 @@ func (m *MockBalanceService) EXPECT() *MockBalanceServiceMockRecorder {
 }
 
 // CreateWithdrawal mocks base method.
-func (m *MockBalanceService) CreateWithdrawal(ctx context.Context, userID int64, orderNumber string, sum float64) error {
+func (m *MockBalanceService) CreateWithdrawal(ctx context.Context, userID int64, orderNumber string, sum float32) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateWithdrawal", ctx, userID, orderNumber, sum)
 	ret0, _ := ret[0].(error)

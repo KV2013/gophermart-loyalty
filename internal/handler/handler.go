@@ -18,7 +18,7 @@ type BalanceService interface {
 	FindUserByUUID(ctx context.Context, uuid string) (*model.User, error)
 	GetBalance(ctx context.Context, userID int64) (*model.Balance, error)
 	GetUserWithdrawals(ctx context.Context, userID int64) ([]model.Transaction, error)
-	CreateWithdrawal(ctx context.Context, userID int64, orderNumber string, sum float64) error
+	CreateWithdrawal(ctx context.Context, userID int64, orderNumber string, sum float32) error
 }
 
 type OrderService interface {

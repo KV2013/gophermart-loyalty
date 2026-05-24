@@ -117,7 +117,7 @@ func TestAPIUserGetBalance(t *testing.T) {
 
 type withdrawalResponse struct {
 	Order       string  `json:"order"`
-	Sum         float64 `json:"sum"`
+	Sum         float32 `json:"sum"`
 	ProcessedAt string  `json:"processed_at"`
 }
 
@@ -231,7 +231,7 @@ func TestAPIUserCreateWithdrawal(t *testing.T) {
 			uuid: testUserUUID,
 			setup: func(svc *mock.MockBalanceService) {
 				svc.EXPECT().FindUserByUUID(gomock.Any(), testUserUUID).Return(testUser(), nil)
-				svc.EXPECT().CreateWithdrawal(gomock.Any(), int64(1), "79927398713", float64(100)).Return(nil)
+				svc.EXPECT().CreateWithdrawal(gomock.Any(), int64(1), "79927398713", float32(100)).Return(nil)
 			},
 			wantStatus: http.StatusOK,
 		},
@@ -311,7 +311,7 @@ func TestAPIUserCreateWithdrawal(t *testing.T) {
 			uuid: testUserUUID,
 			setup: func(svc *mock.MockBalanceService) {
 				svc.EXPECT().FindUserByUUID(gomock.Any(), testUserUUID).Return(testUser(), nil)
-				svc.EXPECT().CreateWithdrawal(gomock.Any(), int64(1), "79927398713", float64(1000)).
+				svc.EXPECT().CreateWithdrawal(gomock.Any(), int64(1), "79927398713", float32(1000)).
 					Return(&model.ErrInsufficientBalance{})
 			},
 			wantStatus: http.StatusPaymentRequired,
@@ -322,7 +322,7 @@ func TestAPIUserCreateWithdrawal(t *testing.T) {
 			uuid: testUserUUID,
 			setup: func(svc *mock.MockBalanceService) {
 				svc.EXPECT().FindUserByUUID(gomock.Any(), testUserUUID).Return(testUser(), nil)
-				svc.EXPECT().CreateWithdrawal(gomock.Any(), int64(1), "79927398713", float64(100)).
+				svc.EXPECT().CreateWithdrawal(gomock.Any(), int64(1), "79927398713", float32(100)).
 					Return(errors.New("db error"))
 			},
 			wantStatus: http.StatusInternalServerError,

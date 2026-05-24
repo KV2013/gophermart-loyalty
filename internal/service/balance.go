@@ -14,14 +14,14 @@ import (
 type accrualResponse struct {
 	Order   string  `json:"order"`
 	Status  string  `json:"status"`
-	Accrual float64 `json:"accrual"`
+	Accrual float32 `json:"accrual"`
 }
 
 type orderResult struct {
 	OrderID int64
 	UserID  int64
 	Status  string
-	Accrual float64
+	Accrual float32
 	Err     error
 }
 
@@ -67,7 +67,7 @@ func (s *balanceService) GetUserWithdrawals(ctx context.Context, userID int64) (
 	return withdrawals, nil
 }
 
-func (s *balanceService) CreateWithdrawal(ctx context.Context, userID int64, orderNumber string, sum float64) error {
+func (s *balanceService) CreateWithdrawal(ctx context.Context, userID int64, orderNumber string, sum float32) error {
 	balance, err := s.repo.GetBalance(ctx, userID)
 	if err != nil {
 		return fmt.Errorf("balanceService.CreateWithdrawal: %w", err)

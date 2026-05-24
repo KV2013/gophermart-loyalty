@@ -15,20 +15,20 @@ import (
 //easyjson:json
 type WithdrawalRequest struct {
 	Order string  `json:"order"`
-	Sum   float64 `json:"sum"`
+	Sum   float32 `json:"sum"`
 }
 
 //easyjson:json
 type WithdrawalResponse struct {
 	Order       string  `json:"order"`
-	Sum         float64 `json:"sum"`
+	Sum         float32 `json:"sum"`
 	ProcessedAt string  `json:"processed_at"`
 }
 
 //easyjson:json
 type WithdrawalListResponse struct {
 	Order       string  `json:"order"`
-	Sum         float64 `json:"sum"`
+	Sum         float32 `json:"sum"`
 	ProcessedAt string  `json:"processed_at"`
 }
 
