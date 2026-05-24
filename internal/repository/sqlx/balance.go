@@ -36,7 +36,7 @@ func (r *BalanceRepository) GetBalance(ctx context.Context, userID int64) (*mode
 func (r *BalanceRepository) GetUserWithdrawals(ctx context.Context, userID int64) ([]model.Transaction, error) {
 	var transactions []model.Transaction
 	query := `
-		SELECT id, order_id, order_number, user_id, sum, created_at
+		SELECT id, order_id, order_number, user_id, ABS(sum) sum, created_at
 		FROM transactions
 		WHERE user_id = $1 AND sum < 0
 		ORDER BY created_at DESC`
