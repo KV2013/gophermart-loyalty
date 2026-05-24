@@ -12,7 +12,7 @@ import (
 
 func NewConnection(dbURI string) (*sqlx.DB, error) {
 	if dbURI == "" {
-		return nil, errors.New("Не задан URI для подключения к БД")
+		return nil, errors.New("не задан URI для подключения к БД")
 	}
 	db, err := sqlx.Connect("pgx", dbURI)
 	if err != nil {

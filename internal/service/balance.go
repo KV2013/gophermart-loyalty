@@ -188,20 +188,20 @@ func (s *balanceService) fetchAccrual(orderNumber string) (*accrualResponse, err
 	defer resp.Body.Close()
 
 	if resp.StatusCode == http.StatusNoContent {
-		return nil, fmt.Errorf("Заказ не зарегистрирован в системе начисления баллов")
+		return nil, fmt.Errorf("заказ не зарегистрирован в системе начисления баллов")
 	}
 
 	if resp.StatusCode == http.StatusTooManyRequests {
-		return nil, fmt.Errorf("Превышен лимит запросов к сервису начисления баллов)")
+		return nil, fmt.Errorf("превышен лимит запросов к сервису начисления баллов)")
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("От сервиса начисления баллов получен статус ошибки %d", resp.StatusCode)
+		return nil, fmt.Errorf("от сервиса начисления баллов получен статус ошибки %d", resp.StatusCode)
 	}
 
 	var result accrualResponse
 	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil { // TODO: переделать в easyjson
-		return nil, fmt.Errorf("Декоидирование ответа от сервиса начисления баллов вызвало ошику: %w", err)
+		return nil, fmt.Errorf("декоидирование ответа от сервиса начисления баллов вызвало ошику: %w", err)
 	}
 
 	return &result, nil

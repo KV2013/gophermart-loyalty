@@ -17,7 +17,7 @@ func Init(
 
 	r := chi.NewRouter()
 	r.Use(middleware.ZapLogger(logger))
-	r.Use(middleware.Api(logger))
+	r.Use(middleware.API(logger))
 	r.Use(middleware.GzipCompression)
 
 	r.Post("/api/user/register", h.Auth.APIUserRegister)

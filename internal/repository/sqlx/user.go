@@ -18,7 +18,7 @@ type UserRepository struct {
 	logger *zap.Logger
 }
 
-var userFieldsSql = `id, uuid, login, created_at, updated_at, deleted_at`
+var userFieldsSQL = `id, uuid, login, created_at, updated_at, deleted_at`
 
 func NewUserRepository(db *sqlx.DB, logger *zap.Logger) (*UserRepository, error) {
 
@@ -29,7 +29,7 @@ func NewUserRepository(db *sqlx.DB, logger *zap.Logger) (*UserRepository, error)
 
 func (r *UserRepository) FindByLogin(ctx context.Context, login string) (*model.User, error) {
 	var user model.User
-	err := r.db.GetContext(ctx, &user, `SELECT `+userFieldsSql+` FROM users WHERE login = $1 AND deleted_at IS NULL`, login)
+	err := r.db.GetContext(ctx, &user, `SELECT `+userFieldsSQL+` FROM users WHERE login = $1 AND deleted_at IS NULL`, login)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil
@@ -42,7 +42,7 @@ func (r *UserRepository) FindByLogin(ctx context.Context, login string) (*model.
 func (r *UserRepository) Create(ctx context.Context, login string, passwordHash string) (*model.User, error) {
 	var user model.User
 
-	newUserQuery := `INSERT INTO users (login, password) VALUES ($1, $2) RETURNING ` + userFieldsSql
+	newUserQuery := `INSERT INTO users (login, password) VALUES ($1, $2) RETURNING ` + userFieldsSQL
 
 	row := r.db.QueryRowxContext(ctx, newUserQuery, login, passwordHash)
 
@@ -60,7 +60,7 @@ func (r *UserRepository) Create(ctx context.Context, login string, passwordHash 
 func (r *UserRepository) FindByCredentials(ctx context.Context, login string, passwordHash string) (*model.User, error) {
 	var user model.User
 
-	findByCredentialsQuery := `SELECT ` + userFieldsSql + ` FROM users WHERE login LIKE $1 AND password LIKE $2`
+	findByCredentialsQuery := `SELECT ` + userFieldsSQL + ` FROM users WHERE login LIKE $1 AND password LIKE $2`
 	err := r.db.GetContext(ctx, &user, findByCredentialsQuery, login, passwordHash)
 
 	if err != nil {
@@ -79,7 +79,7 @@ func (r *UserRepository) FindByCredentials(ctx context.Context, login string, pa
 
 func (r *UserRepository) FindByUUID(ctx context.Context, uuid string) (*model.User, error) {
 	var user model.User
-	err := r.db.GetContext(ctx, &user, `SELECT `+userFieldsSql+` FROM users WHERE uuid = $1`, uuid)
+	err := r.db.GetContext(ctx, &user, `SELECT `+userFieldsSQL+` FROM users WHERE uuid = $1`, uuid)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, &model.ErrUserNotFound{Login: uuid}
