@@ -53,3 +53,11 @@ func (r *BalanceRepository) CreateWithdrawal(ctx context.Context, userID int64, 
 	}
 	return nil
 }
+
+func (r *BalanceRepository) CreateAccrualTransaction(ctx context.Context, orderID int64, userID int64, sum float64) error {
+	query := `INSERT INTO transactions (order_id, user_id, sum) VALUES ($1, $2, $3)`
+	if _, err := r.db.ExecContext(ctx, query, orderID, userID, sum); err != nil {
+		return fmt.Errorf("BalanceRepository.CreateAccrualTransaction: %w", err)
+	}
+	return nil
+}

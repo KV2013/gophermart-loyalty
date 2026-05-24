@@ -32,7 +32,7 @@ func main() {
 	if repoErr != nil {
 		Logger.Fatal("Ошибка при сборке репозитория", zap.Error(repoErr))
 	}
-	service := service.New(repository.User, repository.Order, repository.Balance, Logger)
+	service := service.New(repository.User, repository.Order, repository.Balance, Logger, config.AccrualSystemAddress)
 	handler := handler.New(service.Auth, service.Balance, service.Order, config, Logger)
 
 	mux := router.Init(handler, service.Auth, Logger, config)
@@ -44,6 +44,9 @@ func main() {
 		IdleTimeout:  60 * time.Second,
 	}
 
+	ctx, cancelCtx := context.WithCancel(context.Background())
+	defer cancelCtx()
+	go service.Balance.StartPointsAccrualQueue(ctx)
 	go func() {
 		Logger.Info(
 			"Сервер запущен",
@@ -62,10 +65,10 @@ func main() {
 	<-quit
 
 	Logger.Info("Получен сигнал завершения. Начинаем graceful shutdown...")
-	ctx, cancelCtx := context.WithTimeout(context.Background(), 15*time.Second)
-	defer cancelCtx()
+	shutdownCtx, cancelShutdownCtx := context.WithTimeout(context.Background(), 15*time.Second)
+	defer cancelShutdownCtx()
 
-	err := srv.Shutdown(ctx)
+	err := srv.Shutdown(shutdownCtx)
 
 	if err != nil {
 		Logger.Fatal("Ошибка при завершении сервера", zap.Error(err))
