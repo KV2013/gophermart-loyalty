@@ -92,6 +92,18 @@ func (r *UserRepository) FindByUUID(ctx context.Context, uuid string) (*model.Us
 	return &user, nil
 }
 
+func (r *UserRepository) GetPasswordHash(ctx context.Context, login string) (string, error) {
+	var hash string
+	err := r.db.GetContext(ctx, &hash, `SELECT password FROM users WHERE login = $1 AND deleted_at IS NULL`, login)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return "", nil
+		}
+		return "", fmt.Errorf("GetPasswordHash: %w", err)
+	}
+	return hash, nil
+}
+
 func (r *UserRepository) UUIDExists(ctx context.Context, uuid string) (bool, error) {
 	var exists bool
 	err := r.db.GetContext(ctx, &exists, `SELECT EXISTS(SELECT 1 FROM users WHERE uuid = $1 AND deleted_at IS NULL)`, uuid)

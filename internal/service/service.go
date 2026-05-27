@@ -14,6 +14,7 @@ type UserRepository interface {
 	FindByUUID(ctx context.Context, uuid string) (*model.User, error)
 	UUIDExists(ctx context.Context, uuid string) (bool, error)
 	Create(ctx context.Context, login string, passwordHash string) (*model.User, error)
+	GetPasswordHash(ctx context.Context, login string) (string, error)
 }
 
 // OrderRepository — интерфейс репозитория заказов, определён на стороне потребителя.
