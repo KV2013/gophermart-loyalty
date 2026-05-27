@@ -90,8 +90,12 @@ func (gz *gzipCompressReader) Read(p []byte) (int, error) {
 	return gz.zr.Read(p)
 }
 func (gz *gzipCompressReader) Close() error {
+	if err := gz.zr.Close(); err != nil {
+		return err
+	}
 	if err := gz.r.Close(); err != nil {
 		return err
 	}
-	return gz.r.Close()
+
+	return nil
 }
