@@ -1,0 +1,48 @@
+// тестовые запросы
+BASE=http://localhost:8080
+
+// register
+curl -v -X POST "$BASE/api/user/register" \
+  -H "Content-Type: application/json" \
+  -d '{"login":"testuser","password":"pass123"}' \
+  -c gophermart-cookie.txt \
+  -w "\nHTTP status: %{http_code}\n"
+
+// login
+curl -v -X POST "$BASE/api/user/login" \
+  -H "Content-Type: application/json" \
+  -d '{"login":"testuser","password":"pass123"}' \
+  -c gophermart-cookie.txt \
+  -w "\nHTTP status: %{http_code}\n"
+
+// GET orders
+curl -v -X GET "$BASE/api/user/orders" \
+  -H "Content-Type: application/json" \
+  -b gophermart-cookie.txt \
+  -w "\nHTTP status: %{http_code}\n"
+
+// POST order
+curl -v -X POST "$BASE/api/user/orders" \
+  -H "Content-Type: text/plain" \
+  -d "12345678903" \
+  -b gophermart-cookie.txt \
+  -w "\nHTTP status: %{http_code}\n"
+
+// GET balance
+curl -v -X GET "$BASE/api/user/balance" \
+  -H "Content-Type: application/json" \
+  -b gophermart-cookie.txt \
+  -w "\nHTTP status: %{http_code}\n"
+
+// GET withdrawals
+curl -v -X GET "$BASE/api/user/withdrawals" \
+  -H "Content-Type: application/json" \
+  -b gophermart-cookie.txt \
+  -w "\nHTTP status: %{http_code}\n"
+
+// POST withdrawal
+curl -v -X POST "$BASE/api/user/balance/withdraw" \
+  -H "Content-Type: application/json" \
+  -d '{"order":"2377225624","sum":500}' \
+  -b gophermart-cookie.txt\
+  -w "\nHTTP status: %{http_code}\n"
