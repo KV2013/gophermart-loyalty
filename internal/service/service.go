@@ -41,10 +41,10 @@ type Service struct {
 	Balance *balanceService
 }
 
-func New(userRepo UserRepository, orderRepo OrderRepository, balanceRepo BalanceRepository, logger *zap.Logger, accrualAddress string) *Service {
+func New(userRepo UserRepository, orderRepo OrderRepository, balanceRepo BalanceRepository, logger *zap.Logger) *Service {
 	return &Service{
 		Auth:    NewAuthService(userRepo, logger),
 		Order:   NewOrderService(orderRepo, userRepo, logger),
-		Balance: NewBalanceService(balanceRepo, userRepo, orderRepo, logger, accrualAddress),
+		Balance: NewBalanceService(balanceRepo, userRepo, logger),
 	}
 }

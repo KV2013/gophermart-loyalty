@@ -15,6 +15,7 @@ import (
 	"github.com/KV2013/gophermart-loyalty/internal/repository"
 	"github.com/KV2013/gophermart-loyalty/internal/router"
 	"github.com/KV2013/gophermart-loyalty/internal/service"
+	"github.com/KV2013/gophermart-loyalty/internal/worker"
 	"go.uber.org/zap"
 )
 
@@ -33,7 +34,7 @@ func main() {
 	if repoErr != nil {
 		Logger.Fatal("Ошибка при сборке репозитория", zap.Error(repoErr))
 	}
-	service := service.New(repository.User, repository.Order, repository.Balance, Logger, config.AccrualSystemAddress)
+	service := service.New(repository.User, repository.Order, repository.Balance, Logger)
 	handler := handler.New(service.Auth, service.Balance, service.Order, config, Logger)
 
 	mux := router.Init(handler, service.Auth, Logger, config)
@@ -47,7 +48,8 @@ func main() {
 
 	ctx, cancelCtx := context.WithCancel(context.Background())
 	defer cancelCtx()
-	go service.Balance.StartPointsAccrualQueue(ctx)
+	accrualWorker := worker.New(repository.Order, repository.Balance, Logger, config.AccrualSystemAddress)
+	go accrualWorker.Start(ctx)
 	go func() {
 		Logger.Info(
 			"Сервер запущен",
