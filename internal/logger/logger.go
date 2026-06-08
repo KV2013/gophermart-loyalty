@@ -22,7 +22,6 @@ func New(level string) (*zap.Logger, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer zl.Sync()
 
 	return zl, nil
 }

@@ -9,7 +9,6 @@ type Config struct {
 	DatabaseURI          string `env:"DATABASE_URI"`
 	JWTSecretKey         string `env:"JWT_SECRET_KEY"`
 	AccrualSystemAddress string `env:"ACCRUAL_SYSTEM_ADDRESS"`
-	DatabaseDSN          string `env:"DATABASE_DSN"`
 }
 
 func NewConfig() (*Config, error) {

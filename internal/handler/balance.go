@@ -25,13 +25,6 @@ type WithdrawalResponse struct {
 	ProcessedAt string  `json:"processed_at"`
 }
 
-//easyjson:json
-type WithdrawalListResponse struct {
-	Order       string  `json:"order"`
-	Sum         float32 `json:"sum"`
-	ProcessedAt string  `json:"processed_at"`
-}
-
 type BalanceHandler struct {
 	service BalanceService
 	config  *config.Config

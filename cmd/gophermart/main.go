@@ -27,6 +27,7 @@ func main() {
 	if loggerErr != nil {
 		log.Fatal("Ошибка при сборке логгера")
 	}
+	defer Logger.Sync()
 
 	repository, repoErr := repository.New(config, Logger)
 	if repoErr != nil {
