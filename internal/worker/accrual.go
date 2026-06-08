@@ -94,10 +94,10 @@ func (w *AccrualWorker) Start(ctx context.Context) {
 
 			for _, order := range orders {
 				queue.AddJob(QueueJob{
-					OrderID: order.ID,
-					UserID:  order.UserID,
-					Type:    "FETCH_ACCRUAL",
-					Payload: map[string]interface{}{"orderNumber": order.Number},
+					OrderID:     order.ID,
+					UserID:      order.UserID,
+					Type:        "FETCH_ACCRUAL",
+					OrderNumber: order.Number,
 				})
 			}
 		}
@@ -114,7 +114,7 @@ func (w *AccrualWorker) processQueueJobs(id int, ctx context.Context, queue *Ord
 			job := queue.GetJob()
 			switch job.Type {
 			case "FETCH_ACCRUAL":
-				accrualResp, err := w.fetchAccrual(job.Payload["orderNumber"].(string))
+				accrualResp, err := w.fetchAccrual(job.OrderNumber)
 				if err != nil {
 					w.logger.Error("AccrualWorker: ошибка получения начислений", zap.Error(err), zap.Int64("OrderID", job.OrderID))
 					continue
@@ -122,25 +122,19 @@ func (w *AccrualWorker) processQueueJobs(id int, ctx context.Context, queue *Ord
 				if accrualResp == nil {
 					continue
 				}
-				newJob := QueueJob{
+				queue.AddJob(QueueJob{
 					OrderID: job.OrderID,
 					UserID:  job.UserID,
 					Type:    "UPDATE_ORDER",
-					Payload: map[string]interface{}{"orderResult": &orderResult{
+					OrderResult: &orderResult{
 						OrderID: job.OrderID,
 						UserID:  job.UserID,
 						Accrual: accrualResp.Accrual,
 						Status:  accrualResp.Status,
-					}},
-				}
-				queue.AddJob(newJob)
+					},
+				})
 			case "UPDATE_ORDER":
-				orderRes, ok := job.Payload["orderResult"].(*orderResult)
-				if !ok {
-					w.logger.Error("AccrualWorker: ошибка преобразования orderResult", zap.Int64("OrderID", job.OrderID))
-					continue
-				}
-				w.updatePoints(ctx, orderRes)
+				w.updatePoints(ctx, job.OrderResult)
 			}
 		}
 	}
@@ -230,8 +224,9 @@ func (q *OrderQueue) GetJob() QueueJob {
 }
 
 type QueueJob struct {
-	OrderID int64
-	UserID  int64
-	Type    string
-	Payload map[string]interface{}
+	OrderID     int64
+	UserID      int64
+	Type        string
+	OrderNumber string
+	OrderResult *orderResult
 }
