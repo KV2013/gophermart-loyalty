@@ -2,12 +2,12 @@ package worker
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"time"
 
 	"github.com/KV2013/gophermart-loyalty/internal/model"
+	"github.com/mailru/easyjson"
 	"go.uber.org/zap"
 )
 
@@ -21,6 +21,7 @@ type BalanceRepository interface {
 	CreateAccrualTransaction(ctx context.Context, orderID int64, userID int64, sum float32) error
 }
 
+//easyjson:json
 type accrualResponse struct {
 	Order   string  `json:"order"`
 	Status  string  `json:"status"`
@@ -167,7 +168,7 @@ func (w *AccrualWorker) fetchAccrual(orderNumber string) (*accrualResponse, erro
 	}
 
 	var result accrualResponse
-	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+	if err := easyjson.UnmarshalFromReader(resp.Body, &result); err != nil {
 		return nil, fmt.Errorf("декоидирование ответа от сервиса начисления баллов вызвало ошику: %w", err)
 	}
 
